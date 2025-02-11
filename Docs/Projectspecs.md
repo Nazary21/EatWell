@@ -4,13 +4,14 @@
 ## Table of Contents
 1. Project Overview
 2. Core User Stories
-3. System Architecture
-4. Frontend Components
-5. Data Management
-6. Backend Integration
-7. Development Setup
-8. React Native Implementation Guide
-9. Performance Considerations
+3. Onboarding Flow
+4. System Architecture
+5. Frontend Components
+6. Data Management
+7. Backend Integration
+8. Development Setup
+9. React Native Implementation Guide
+10. Performance Considerations
 
 ## 1. Project Overview
 
@@ -145,7 +146,35 @@ The application follows a modern React Native architecture with:
 - As a user, I can save my progress during onboarding
 - As a user, I can update my profile information at any time
 
-## 2. System Architecture
+## 2. Onboarding Flow
+
+The app features a comprehensive onboarding process designed to collect essential user information while maintaining high engagement through a conversational interface. The flow consists of 26 carefully crafted steps that guide users from initial signup to their personalized plan.
+
+### Key Features
+- Progressive data collection with single-focus screens
+- Personalized goal setting and timeline planning
+- AI-driven progress projections and comparisons
+- Interactive visualizations and engaging UI elements
+- Comprehensive user profiling (demographics, goals, habits)
+
+### Data Collection Categories
+- User Demographics
+- Physical Metrics
+- Lifestyle Preferences
+- Goal Setting
+- Personal Challenges
+- Marketing Attribution
+
+### Technical Considerations
+- Real-time input validation
+- Progress persistence
+- Offline support
+- Analytics integration
+- Seamless back navigation
+
+For detailed specifications of each onboarding step, UI elements, and implementation requirements, refer to [Onboarding Flow Specification](./Onboardingspecs.md).
+
+## 3. System Architecture
 
 ### 3.1 Component Breakdown
 
@@ -354,7 +383,7 @@ The application follows a modern React Native architecture with:
    - PortionSelector (Amount adjustment)
    - CategoryPicker (Meal categorization)
 
-## 3. Frontend Components
+## 4. Frontend Components
 
 ### Component Specifications
 
@@ -961,7 +990,7 @@ async function signInWithProvider(
 }
 ```
 
-## 6. Backend Integration
+## 7. Backend Integration
 
 ### External API Integration
 
@@ -1022,7 +1051,7 @@ The application uses the USDA Food Data Central (FDC) API for comprehensive nutr
    - Response data requires mapping to app's data model
    - Handle rate limiting with exponential backoff
 
-## 7. Development Setup
+## 8. Development Setup
 
 ### Environment Setup
 ```bash
@@ -1039,9 +1068,9 @@ REVENUECAT_PUBLIC_KEY=your_revenuecat_key
 npm run dev
 ```
 
-## 8. React Native Implementation Guide
+## 9. React Native Implementation Guide
 
-### 8.1 Project Architecture
+### 9.1 Project Architecture
 
 #### Core Architecture Principles
 - Clean Architecture approach
@@ -1114,7 +1143,7 @@ feature/
 └── state/          # Feature state management
 ```
 
-### 8.2 Development Standards
+### 9.2 Development Standards
 
 #### TypeScript Best Practices
 ```typescript
@@ -1167,7 +1196,7 @@ const foodSlice = createSlice({
 });
 ```
 
-### 8.3 UI Implementation
+### 9.3 UI Implementation
 
 #### Component Architecture
 ```typescript
@@ -1219,7 +1248,7 @@ function AppNavigator() {
 }
 ```
 
-### 8.4 API Integration
+### 9.4 API Integration
 
 #### Service Layer Pattern
 ```typescript
@@ -1268,7 +1297,7 @@ class ApiErrorHandler {
 }
 ```
 
-### 8.5 Testing Strategy
+### 9.5 Testing Strategy
 
 #### Component Testing
 ```typescript
@@ -1294,7 +1323,7 @@ describe('FoodEntryCard', () => {
 });
 ```
 
-### 8.6 Performance Optimization
+### 9.6 Performance Optimization
 
 #### List Rendering
 ```typescript
@@ -1332,7 +1361,7 @@ function OptimizedImage({ uri, size }: { uri: string; size: number }) {
 }
 ```
 
-## 9. Performance Considerations
+## 10. Performance Considerations
 
 ### AI Request Optimization
 - Implement request debouncing
@@ -1351,3 +1380,32 @@ function OptimizedImage({ uri, size }: { uri: string; size: number }) {
 - Cache onboarding progress
 - Optimize image assets
 - Implement step preloading
+
+
+## 11. Onboarding Flow
+
+The app features a comprehensive onboarding process designed to collect essential user information while maintaining high engagement through a conversational interface. The flow consists of 26 carefully crafted steps that guide users from initial signup to their personalized plan.
+
+### Key Features
+- Progressive data collection with single-focus screens
+- Personalized goal setting and timeline planning
+- AI-driven progress projections and comparisons
+- Interactive visualizations and engaging UI elements
+- Comprehensive user profiling (demographics, goals, habits)
+
+### Data Collection Categories
+- User Demographics
+- Physical Metrics
+- Lifestyle Preferences
+- Goal Setting
+- Personal Challenges
+- Marketing Attribution
+
+### Technical Considerations
+- Real-time input validation
+- Progress persistence
+- Offline support
+- Analytics integration
+- Seamless back navigation
+
+For detailed specifications of each onboarding step, UI elements, and implementation requirements, refer to [Onboarding Flow Specification](./Onboardingspecs.md).
