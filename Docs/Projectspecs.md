@@ -1506,3 +1506,36 @@ For detailed specifications of each onboarding step, UI elements, and implementa
 - Success feedback through multiple channels
 - Adjustable timing for notifications
 - Progress indicators for long operations
+
+## Frontend Components
+
+### Component Development Standards
+All core components must follow our established development pattern. See [Component Development Guide](./guides/ComponentDevelopment.md) for detailed requirements.
+
+#### Quick Reference
+- Location: `src/components/core/`
+- Required files:
+  - Component implementation (TypeScript)
+  - Documentation (Markdown)
+  - Tests
+  - Usage examples
+- Reference implementation: Button component
+
+#### Core Components
+These components form our design system foundation:
+- [ ] Button ✅
+- [ ] Input
+- [ ] Card
+- [ ] Modal
+- [ ] Typography
+- [ ] Icons
+- [ ] List
+- [ ] Navigation elements
+
+Each component must be:
+- Fully typed with TypeScript
+- Documented following our standard
+- Tested comprehensively
+- Accessible by default
+- Theme-aware
+- Performance optimized

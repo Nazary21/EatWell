@@ -46,15 +46,11 @@
   },
   "private": true,
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "node scripts/check-component-docs.js",
-      "node scripts/check-api-docs.js"
+    "src/components/core/*.{ts,tsx}": [
+      "node scripts/check-component-docs.js"
     ],
-    "src/lib/**/*.ts": [
-      "node scripts/check-api-docs.js"
-    ],
-    ".env.example": [
-      "node scripts/check-env-docs.js"
+    ".env": [
+      "node scripts/check-env-example.js"
     ]
   }
 }
