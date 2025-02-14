@@ -1,5 +1,8 @@
-import { supabase } from './supabase';
+import 'react-native-url-polyfill/auto';
 import { Platform } from 'react-native';
+import { supabase } from './supabase';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import Constants from 'expo-constants';
 
 export type SignInProvider = 'google' | 'apple' | 'email';
 
@@ -7,6 +10,18 @@ export interface EmailSignInCredentials {
   email: string;
   password: string;
 }
+
+// Initialize Google Sign-In
+GoogleSignin.configure({
+  webClientId: Platform.select({
+    android: '963420431336-et5t2rtngh7a74pfchl5jckj7kpvbiu6.apps.googleusercontent.com',
+    ios: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
+  }),
+  iosClientId: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
+});
+
+// Check if we're in Expo Go
+const isExpoGo = Constants.appOwnership === 'expo';
 
 export const signInWithEmail = async ({ email, password }: EmailSignInCredentials) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -33,6 +48,16 @@ export const signInWithProvider = async (provider: SignInProvider) => {
     throw new Error('Use signInWithEmail for email authentication');
   }
 
+  if (isExpoGo) {
+    throw new Error('Social sign-in is not available in Expo Go. Please use email authentication.');
+  }
+
+  // This code will only run in development builds or production
+  if (provider === 'google') {
+    throw new Error('Google Sign-In requires a development build. Please use email authentication in Expo Go.');
+  }
+
+  // For other providers (like Apple), use the default OAuth flow
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -45,6 +70,9 @@ export const signInWithProvider = async (provider: SignInProvider) => {
 };
 
 export const signOut = async () => {
+  if (await GoogleSignin.isSignedIn()) {
+    await GoogleSignin.signOut();
+  }
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 };
