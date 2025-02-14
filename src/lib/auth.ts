@@ -1,7 +1,6 @@
 import 'react-native-url-polyfill/auto';
 import { Platform } from 'react-native';
 import { supabase } from './supabase';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Constants from 'expo-constants';
 
 export type SignInProvider = 'google' | 'apple' | 'email';
@@ -11,17 +10,21 @@ export interface EmailSignInCredentials {
   password: string;
 }
 
-// Initialize Google Sign-In
-GoogleSignin.configure({
-  webClientId: Platform.select({
-    android: '963420431336-et5t2rtngh7a74pfchl5jckj7kpvbiu6.apps.googleusercontent.com',
-    ios: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
-  }),
-  iosClientId: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
-});
-
 // Check if we're in Expo Go
 const isExpoGo = Constants.appOwnership === 'expo';
+
+// Only import and initialize Google Sign-In if not in Expo Go
+let GoogleSignin: any;
+if (!isExpoGo) {
+  GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
+  GoogleSignin.configure({
+    webClientId: Platform.select({
+      android: '963420431336-et5t2rtngh7a74pfchl5jckj7kpvbiu6.apps.googleusercontent.com',
+      ios: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
+    }),
+    iosClientId: '963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com',
+  });
+}
 
 export const signInWithEmail = async ({ email, password }: EmailSignInCredentials) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -70,7 +73,7 @@ export const signInWithProvider = async (provider: SignInProvider) => {
 };
 
 export const signOut = async () => {
-  if (await GoogleSignin.isSignedIn()) {
+  if (!isExpoGo && GoogleSignin && await GoogleSignin.isSignedIn()) {
     await GoogleSignin.signOut();
   }
   const { error } = await supabase.auth.signOut();
