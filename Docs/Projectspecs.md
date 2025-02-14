@@ -1409,3 +1409,33 @@ The app features a comprehensive onboarding process designed to collect essentia
 - Seamless back navigation
 
 For detailed specifications of each onboarding step, UI elements, and implementation requirements, refer to [Onboarding Flow Specification](./Onboardingspecs.md).
+
+## Development Guidelines
+
+### Logging Strategy
+- **Purpose**: Enable effective testing, validation, and troubleshooting while maintaining code simplicity
+- **Core Principles**:
+  1. Log key lifecycle events (initialization, major state changes)
+  2. Log important user interactions and their outcomes
+  3. Log errors and edge cases
+  4. Keep logging simple and meaningful
+
+- **Logging Categories**:
+  - 🚀 System: App lifecycle and initialization
+  - 📱 UI: Major UI state changes and renders
+  - 🧭 Navigation: Route changes and navigation events
+  - 💾 Data: Important data operations
+  - ❌ Errors: Error states and failures
+
+- **Format Guidelines**:
+  - Use emojis for quick visual categorization
+  - Include timestamps for time-sensitive operations
+  - Log objects with relevant context, not just messages
+  - Avoid logging sensitive information
+
+- **When to Log**:
+  - Application startup and initialization
+  - Navigation state changes
+  - Important user interactions
+  - Data operations success/failure
+  - Error conditions and edge cases
