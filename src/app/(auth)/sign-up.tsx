@@ -62,6 +62,7 @@ const SignUpScreen = () => {
           autoComplete="email"
           keyboardType="email-address"
           style={styles.input}
+          testID="email-input"
         />
         
         <TextInput
@@ -71,6 +72,7 @@ const SignUpScreen = () => {
           secureTextEntry
           autoComplete="password-new"
           style={styles.input}
+          testID="password-input"
         />
 
         {error ? (

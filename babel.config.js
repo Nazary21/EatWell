@@ -13,6 +13,14 @@ module.exports = function (api) {
           },
         },
       ],
+      '@babel/plugin-transform-export-namespace-from',
+      '@babel/plugin-proposal-export-namespace-from',
+      'expo-router/babel',
     ],
+    env: {
+      test: {
+        plugins: ['@babel/plugin-transform-flow-strip-types']
+      }
+    }
   };
 }; 

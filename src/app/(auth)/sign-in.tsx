@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Text, TextInput, Button, useTheme } from 'react-native-paper';
 import { useState } from 'react';
@@ -83,6 +84,7 @@ const SignInScreen = () => {
           autoComplete="email"
           keyboardType="email-address"
           style={styles.input}
+          testID="email-input"
         />
         
         <TextInput
@@ -92,6 +94,7 @@ const SignInScreen = () => {
           secureTextEntry
           autoComplete="password"
           style={styles.input}
+          testID="password-input"
         />
 
         {error ? (

@@ -37,12 +37,6 @@
           <string>exp+caltrackerreact</string>
         </array>
       </dict>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>com.googleusercontent.apps.963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8</string>
-        </array>
-      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>

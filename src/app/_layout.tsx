@@ -1,67 +1,121 @@
-import { Slot, Stack } from 'expo-router';
-import { MD3LightTheme, MD3DarkTheme, Provider as PaperProvider } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_700Bold,
-} from '@expo-google-fonts/inter';
-import {
-  PlusJakartaSans_700Bold,
-} from '@expo-google-fonts/plus-jakarta-sans';
-import { Redirect } from 'expo-router';
+import { Slot, Redirect, Stack } from 'expo-router';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { useEffect, useState, useCallback } from 'react';
+import { useColorScheme, View } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import { Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
+import { PlusJakartaSans_700Bold } from '@expo-google-fonts/plus-jakarta-sans';
+import { Provider } from 'react-redux';
 import theme from '@/theme';
 import { supabase } from '@/lib/supabase';
-import { Session } from '@supabase/supabase-js';
+import { store } from '@/store';
+import { setSession } from '@/store/slices/authSlice';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync().catch(() => {
+  /* reloading the app might trigger some race conditions, ignore them */
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_700Bold,
-    PlusJakartaSans_700Bold,
-  });
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    async function loadFonts() {
+      try {
+        await Font.loadAsync({
+          Inter_400Regular,
+          Inter_500Medium,
+          Inter_700Bold,
+          PlusJakartaSans_700Bold,
+        });
+        setFontsLoaded(true);
+      } catch (e) {
+        console.warn('Failed to load fonts:', e);
+        // Continue without custom fonts if loading fails
+        setFontsLoaded(true);
+      }
+    }
+    loadFonts();
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded) {
-      console.log('🎨 Fonts loaded successfully');
+    async function prepare() {
+      try {
+        console.log('🚀 Preparing app...');
+        // Pre-load fonts, make any API calls you need to do here
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('👤 Auth state:', session ? 'Authenticated' : 'Not authenticated');
+        store.dispatch(setSession(session));
+        
+        // Set initial route based on auth state
+        const route = session ? '/(tabs)' : '/(auth)/sign-in';
+        console.log('🔄 Setting initial route:', route);
+        setInitialRoute(route);
+
+        // Subscribe to auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          console.log('🔄 Auth state changed:', session ? 'Authenticated' : 'Not authenticated');
+          store.dispatch(setSession(session));
+          setInitialRoute(session ? '/(tabs)' : '/(auth)/sign-in');
+        });
+
+        return () => subscription.unsubscribe();
+      } catch (e) {
+        console.warn('❌ Error during preparation:', e);
+        setInitialRoute('/(auth)/sign-in');
+      } finally {
+        console.log('✅ App is ready');
+        setAppIsReady(true);
+      }
     }
-  }, [fontsLoaded]);
+
+    prepare();
+  }, []);
 
   useEffect(() => {
-    console.log('🚀 App Initialized');
-    console.log('📱 React Native Paper Provider mounted');
-    console.log('🧭 Navigation system ready');
-    console.log('🌓 Color scheme:', colorScheme);
-  }, [colorScheme]);
+    if (appIsReady) {
+      console.log('📱 App state:', {
+        appIsReady,
+        fontsLoaded,
+        initialRoute,
+        colorScheme
+      });
+    }
+  }, [appIsReady, fontsLoaded, initialRoute, colorScheme]);
 
-  if (!fontsLoaded || isLoading) {
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady && fontsLoaded) {
+      console.log('🎨 Layout ready, hiding splash screen');
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady, fontsLoaded]);
+
+  if (!appIsReady || !fontsLoaded || !initialRoute) {
+    console.log('⏳ Loading...', { appIsReady, fontsLoaded, initialRoute });
     return null;
   }
 
   return (
-    <PaperProvider theme={colorScheme === 'dark' ? theme.dark : theme.light}>
-      <Slot />
-      {!session && <Redirect href="/(auth)/sign-in" />}
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider theme={colorScheme === 'dark' ? theme.dark : theme.light}>
+        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: 'fade',
+            }}
+          >
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="index" />
+          </Stack>
+          {initialRoute && <Redirect href={initialRoute} />}
+        </View>
+      </PaperProvider>
+    </Provider>
   );
 } 

@@ -1,20 +1,22 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Text, TextInput, Button, useTheme } from 'react-native-paper';
 import { useState } from 'react';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 
 export default function ForgotPasswordScreen() {
   const theme = useTheme();
   const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [step, setStep] = useState<'email' | 'code'>('email');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
-  const handleResetPassword = async () => {
+  const handleSendCode = async () => {
     setLoading(true);
     setError('');
-    setSuccess(false);
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -22,9 +24,39 @@ export default function ForgotPasswordScreen() {
       });
 
       if (error) throw error;
-      setSuccess(true);
+      setStep('code');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send reset email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!code || code.length < 6) {
+      setError('Please enter the 6-digit code from your email');
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // In a real implementation, you would verify the code here
+      // For Expo Go testing, we'll just update the password
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+      router.replace('/(auth)/sign-in');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reset password');
     } finally {
       setLoading(false);
     }
@@ -49,42 +81,89 @@ export default function ForgotPasswordScreen() {
             marginTop: 8,
           }}
         >
-          Enter your email address and we'll send you instructions to reset your password
+          {step === 'email' 
+            ? 'Enter your email to receive a reset code'
+            : 'Enter the code from your email and your new password'}
         </Text>
       </View>
 
       <View style={styles.form}>
-        <TextInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          autoComplete="email"
-          keyboardType="email-address"
-          style={styles.input}
-        />
+        {step === 'email' ? (
+          <>
+            <TextInput
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              style={styles.input}
+            />
 
-        {error ? (
-          <Text style={[styles.error, { color: theme.colors.error }]}>
-            {error}
-          </Text>
-        ) : null}
+            {error ? (
+              <Text style={[styles.error, { color: theme.colors.error }]}>
+                {error}
+              </Text>
+            ) : null}
 
-        {success ? (
-          <Text style={[styles.success, { color: theme.colors.primary }]}>
-            Check your email for reset instructions
-          </Text>
-        ) : null}
+            <Button
+              mode="contained"
+              onPress={handleSendCode}
+              loading={loading}
+              style={styles.button}
+              disabled={!email}
+            >
+              Send Reset Code
+            </Button>
+          </>
+        ) : (
+          <>
+            <TextInput
+              label="Reset Code"
+              value={code}
+              onChangeText={setCode}
+              keyboardType="number-pad"
+              maxLength={6}
+              style={styles.input}
+            />
 
-        <Button
-          mode="contained"
-          onPress={handleResetPassword}
-          loading={loading}
-          style={styles.button}
-          disabled={!email || success}
-        >
-          Send Reset Instructions
-        </Button>
+            <TextInput
+              label="New Password"
+              value={newPassword}
+              onChangeText={setNewPassword}
+              secureTextEntry
+              style={styles.input}
+            />
+
+            {error ? (
+              <Text style={[styles.error, { color: theme.colors.error }]}>
+                {error}
+              </Text>
+            ) : null}
+
+            <Button
+              mode="contained"
+              onPress={handleVerifyCode}
+              loading={loading}
+              style={styles.button}
+              disabled={!code || !newPassword}
+            >
+              Reset Password
+            </Button>
+
+            <Button
+              mode="text"
+              onPress={() => {
+                setStep('email');
+                setError('');
+                setCode('');
+                setNewPassword('');
+              }}
+            >
+              Try Different Email
+            </Button>
+          </>
+        )}
 
         <Link href="/sign-in" asChild>
           <Button mode="text">Back to Sign In</Button>
@@ -111,10 +190,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   error: {
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  success: {
     marginBottom: 8,
     textAlign: 'center',
   },

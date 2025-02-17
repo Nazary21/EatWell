@@ -106,6 +106,10 @@ The application follows a modern React Native architecture with:
 - As a user, I can edit or delete existing food entries through a consistent modal interface
 - As a user, I can access the edit/delete modal from any view showing food entries
 - As a user, I can set and track my daily calorie goals
+- As a user, I can use AI-powered chat to log my meals using natural language
+- As a user, I can upload food photos for automatic recognition and logging
+- As a user, I can save favorite meals for quick logging
+- As a user, I can use meal templates for common combinations (premium)
 
 ### Profile Management
 - As a user, I can set and update my profile information (weight, height, birth date)
@@ -113,6 +117,9 @@ The application follows a modern React Native architecture with:
 - As a user, I can view my BMI calculation and detailed BMI information
 - As a user, I can update my measurements at any time
 - As a user, I can view my age calculated from my birth date
+- As a user, I can set my dietary preferences and restrictions
+- As a user, I can customize my daily macro and micronutrient goals
+- As a user, I can track my progress with before/after photos (premium)
 
 ### Nutrition Insights
 - As a user, I can view detailed nutritional information for each food item
@@ -120,31 +127,48 @@ The application follows a modern React Native architecture with:
 - As a user, I can view macronutrient breakdowns (protein, carbs, fat, fiber)
 - As a user, I can see progress bars for daily nutrient goals
 - As a user, I can view weekly calorie intake trends
+- As a user, I can receive AI-powered weekly nutrition insights
+- As a user, I can get personalized meal suggestions based on my goals
+- As a user, I can access advanced analytics and trends (premium)
+- As a user, I can export my nutrition data (premium)
 
-### Data Visualization
-- As a user, I can view my daily calorie intake progress
-- As a user, I can see my BMI category on an interactive scale
-- As a user, I can view nutritional information in progress bars
-- As a user, I can track my weekly progress through charts
+### Home Screen Experience
+- As a user, I can view my daily calorie and macro progress at a glance
+- As a user, I can quickly add meals through multiple entry methods
+- As a user, I can see my recent meals and frequent choices
+- As a user, I can view my daily nutrition score
+- As a user, I can access quick actions for logging and tracking
+- As a user, I can see my weight tracking progress
+- As a user, I can view my upcoming meal schedule (premium)
 
-### AI-Powered Features
+### AI Assistant Features
 - As a user, I can add food entries through natural language description
 - As a user, I can upload food photos for automatic recognition and logging
 - As a user, I can receive AI-powered weekly nutrition insights
 - As a user, I can get personalized meal suggestions based on my goals
 - As a user, I can interact with AI to clarify food entries and portions
+- As a user, I can receive smart notifications and reminders
+- As a user, I can get AI-powered recipe suggestions (premium)
+- As a user, I can receive personalized coaching tips (premium)
 
 ### Premium Features
 - As a premium user, I have unlimited AI food recognition attempts
 - As a premium user, I receive detailed nutrition insights and recommendations
 - As a premium user, I can access advanced progress analytics
 - As a premium user, I can export my data in various formats
+- As a premium user, I can create and share custom meal templates
+- As a premium user, I can access meal planning features
+- As a premium user, I can receive personalized coaching
+- As a premium user, I can sync with additional health apps and devices
 
 ### Authentication & Onboarding
 - As a user, I can sign up using email, Google, or Apple authentication
 - As a user, I can complete a comprehensive onboarding process
 - As a user, I can save my progress during onboarding
 - As a user, I can update my profile information at any time
+- As a user, I can set my initial goals and preferences
+- As a user, I can view a personalized app tour
+- As a user, I can restore my previous data when reinstalling
 
 ## 2. Onboarding Flow
 
@@ -1381,7 +1405,6 @@ function OptimizedImage({ uri, size }: { uri: string; size: number }) {
 - Optimize image assets
 - Implement step preloading
 
-
 ## 11. Onboarding Flow
 
 The app features a comprehensive onboarding process designed to collect essential user information while maintaining high engagement through a conversational interface. The flow consists of 26 carefully crafted steps that guide users from initial signup to their personalized plan.
@@ -1539,3 +1562,181 @@ Each component must be:
 - Accessible by default
 - Theme-aware
 - Performance optimized
+
+## Core Features Specification
+
+### 1. Home Screen Dashboard
+- **Daily Overview**
+  - Circular progress indicator for daily calories
+  - Macro distribution (carbs, protein, fat) with percentage breakdown
+  - Quick-add meal button
+  - Today's meals list with timestamps
+  - Nutritional score for the day
+
+- **Quick Actions**
+  - Add meal entry
+  - Start AI chat
+  - Quick weight update
+  - View insights
+
+### 2. Food Logging
+- **Entry Methods**
+  - Manual entry with smart suggestions
+  - AI chat-based entry
+  - Recent/favorites quick-add
+  - Meal templates (future phase)
+
+- **Required Data Points**
+  - Food name/description
+  - Portion size and unit
+  - Calories
+  - Macronutrients (protein, carbs, fat)
+  - Meal category (breakfast, lunch, dinner, snack)
+  - Time of consumption
+  - Optional: notes, photos (future phase)
+
+### 3. AI Chat Interface
+- **Core Functionality**
+  - Natural language food logging
+  - Nutritional advice
+  - Progress insights
+  - Goal recommendations
+
+- **UI Requirements**
+  - Message thread view
+  - Quick action suggestions
+  - Image upload capability (future phase)
+  - Voice input support (future phase)
+  - Loading states for AI responses
+  - Error handling with retry options
+
+### 4. Insights & Analytics
+- **Time-based Views**
+  - Daily breakdown
+  - Weekly trends
+  - Monthly patterns
+  - Custom date ranges
+
+- **Key Metrics**
+  - Calorie trends
+  - Macro distribution
+  - Meal timing patterns
+  - Weight progression
+  - Nutritional scores
+
+- **Data Visualization**
+  - Line/bar charts for trends
+  - Progress indicators
+  - Distribution charts
+  - Goal tracking visualizations
+
+### 5. User Profile & Goals
+- **Profile Data**
+  - Basic info (name, age, gender)
+  - Current weight
+  - Target weight
+  - Height
+  - Activity level
+  - Dietary preferences
+
+- **Goal Setting**
+  - Weight goals
+  - Daily calorie targets
+  - Macro distribution targets
+  - Custom goals (future phase)
+
+### 6. Settings & Preferences
+- **App Configuration**
+  - Notification preferences
+  - Unit system (metric/imperial)
+  - Language preference
+  - Theme selection (light/dark)
+  - Data export options
+
+- **Premium Features**
+  - Advanced analytics
+  - Custom meal templates
+  - AI food recognition
+  - Data export
+  - Meal planning
+
+## Technical Requirements
+
+### Authentication & Security
+- Email/password authentication
+- Social sign-in options
+- Secure data storage
+- Privacy controls
+- Session management
+
+### Offline Capabilities
+- Basic functionality without internet
+- Data synchronization
+- Conflict resolution
+- Cache management
+
+### Performance Requirements
+- Launch time < 2 seconds
+- Smooth scrolling and transitions
+- Efficient data loading
+- Optimized image handling
+- Memory usage < 100MB
+
+### Data Management
+- Local data persistence
+- Background sync
+- Data validation
+- Error handling
+- Backup/restore functionality
+
+## UI/UX Guidelines
+
+### Navigation Structure
+- Bottom tab navigation for main sections
+- Modal overlays for quick actions
+- Stack navigation for detailed views
+- Gesture support for common actions
+
+### Visual Hierarchy
+- Clear content grouping
+- Important information prominence
+- Consistent spacing
+- Visual feedback for actions
+
+### Interaction Patterns
+- Swipe actions for common tasks
+- Pull-to-refresh for updates
+- Long press for additional options
+- Haptic feedback for important actions
+
+### Accessibility
+- Screen reader support
+- Sufficient contrast ratios
+- Adjustable text sizes
+- Touch target sizing
+- Keyboard navigation support
+
+## Error Handling
+- Clear error messages
+- Retry mechanisms
+- Offline mode indicators
+- Data recovery options
+- User feedback collection
+
+## Future Considerations
+- Social features integration
+- Advanced AI capabilities
+- Meal planning system
+- Shopping list integration
+- Recipe management
+
+## Testing Strategy
+- Phase-aligned testing approach
+- Priority-based test implementation
+- Focus on critical paths and core functionality
+- Comprehensive test tracking in [Tests-specs-log.md](./Tests-specs-log.md)
+- Test coverage goals aligned with feature stability
+- Avoid premature testing of unstable features
+- Regular test status reviews and maintenance
+
+For detailed testing guidelines and current status, see [Tests-specs-log.md](./Tests-specs-log.md).
