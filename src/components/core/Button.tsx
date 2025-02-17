@@ -2,39 +2,38 @@ import { StyleSheet } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
 import type { ButtonProps as PaperButtonProps } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import type { 
+  BaseComponentProps, 
+  DisableableProps, 
+  LoadableProps,
+  VariantProps,
+  SizeableProps,
+  FullWidthProps 
+} from './types';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger';
-export type ButtonSize = 'small' | 'medium' | 'large';
-
-export interface ButtonProps extends Omit<PaperButtonProps, 'theme'> {
-  /**
-   * The visual variant of the button
-   * @default 'primary'
-   */
-  variant?: ButtonVariant;
-  
-  /**
-   * The size of the button
-   * @default 'medium'
-   */
-  size?: ButtonSize;
-  
-  /**
-   * Whether the button should take up the full width of its container
-   * @default false
-   */
-  fullWidth?: boolean;
-  
-  /**
-   * Whether the button should show a loading spinner
-   * @default false
-   */
-  loading?: boolean;
-}
+export interface ButtonProps extends 
+  BaseComponentProps,
+  DisableableProps,
+  LoadableProps,
+  VariantProps,
+  SizeableProps,
+  FullWidthProps,
+  Omit<PaperButtonProps, 'theme' | 'mode' | 'style'> {}
 
 /**
  * Primary button component for user interactions.
  * Extends React Native Paper's Button with consistent styling and behavior.
+ * 
+ * @example
+ * ```tsx
+ * <Button 
+ *   variant="primary"
+ *   size="medium"
+ *   onPress={() => {}}
+ * >
+ *   Click Me
+ * </Button>
+ * ```
  */
 export const Button = ({ 
   variant = 'primary',
@@ -43,6 +42,7 @@ export const Button = ({
   style,
   loading = false,
   disabled,
+  testID,
   ...props 
 }: ButtonProps) => {
   const theme = useTheme();
@@ -59,6 +59,11 @@ export const Button = ({
           backgroundColor: 'transparent',
           textColor: theme.colors.primary,
         };
+      case 'tertiary':
+        return {
+          backgroundColor: theme.colors.surfaceVariant,
+          textColor: theme.colors.onSurfaceVariant,
+        };
       case 'danger':
         return {
           backgroundColor: theme.colors.error,
@@ -72,6 +77,7 @@ export const Button = ({
   return (
     <PaperButton
       {...props}
+      testID={testID}
       mode={variant === 'secondary' ? 'outlined' : 'contained'}
       style={[
         styles.base,
