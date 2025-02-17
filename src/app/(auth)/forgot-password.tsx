@@ -15,18 +15,20 @@ export default function ForgotPasswordScreen() {
   const [error, setError] = useState('');
 
   const handleSendCode = async () => {
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${Platform.OS === 'ios' ? 'caltrackerreact://' : 'caltrackerreact'}/password-reset`,
-      });
-
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
       if (error) throw error;
       setStep('code');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send reset email');
+      setError(err instanceof Error ? err.message : 'Failed to send reset code');
     } finally {
       setLoading(false);
     }
@@ -47,13 +49,22 @@ export default function ForgotPasswordScreen() {
     setError('');
 
     try {
-      // In a real implementation, you would verify the code here
-      // For Expo Go testing, we'll just update the password
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: 'recovery'
       });
 
       if (error) throw error;
+
+      // If verification successful, update password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (updateError) throw updateError;
+
+      // Show success message and redirect to sign-in
       router.replace('/(auth)/sign-in');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to reset password');

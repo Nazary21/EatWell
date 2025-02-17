@@ -1,10 +1,5 @@
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Redirect } from 'expo-router';
 
-export default function Home() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text variant="headlineMedium">Welcome to CalTracker</Text>
-    </View>
-  );
+export default function Index() {
+  return <Redirect href="/(auth)/sign-in" />;
 } 

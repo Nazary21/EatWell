@@ -113,7 +113,6 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="index" />
           </Stack>
-          {initialRoute && <Redirect href={initialRoute} />}
         </View>
       </PaperProvider>
     </Provider>
