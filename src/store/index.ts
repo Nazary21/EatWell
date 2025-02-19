@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './slices/authSlice';
 import foodReducer from './slices/foodSlice';
 import profileReducer from './slices/profileSlice';
+import onboardingReducer from './slices/onboardingSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     food: foodReducer,
     profile: profileReducer,
+    onboarding: onboardingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

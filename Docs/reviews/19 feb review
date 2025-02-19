@@ -1,0 +1,254 @@
+Critical Review of Your /Users/nazar/ProjectsApp/CalTrackerReact/src/app/_layout.tsx for Cursor
+Your current code is well-structured, but there are some weak patterns and areas for optimization. Below, I'll break down potential issues and suggest concrete improvements.
+
+🔴 Weak Points & Improvement Areas
+1️⃣ Navigation Handling – Potential Infinite Loops & Unnecessary Re-renders
+🚨 Issue:
+You're calling supabase.auth.getSession() twice—once in initialize() and once in handleNavigation().
+This means duplicate requests for the session.
+Also, useEffect dependencies like segments and navigationState?.key could cause unnecessary re-renders.
+🔧 Solution:
+Store the session globally and only fetch it once.
+Pass the session state as a dependency rather than re-fetching.
+tsx
+Copy
+Edit
+const [session, setSession] = useState(null);
+
+useEffect(() => {
+  async function fetchSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    setSession(session);
+    store.dispatch(setSession(session));
+  }
+
+  fetchSession();
+
+  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+    store.dispatch(setSession(session));
+  });
+
+  return () => authListener?.subscription.unsubscribe();
+}, []);
+✅ Why?
+
+Avoids redundant API calls.
+Improves performance by ensuring session updates dynamically.
+Fixes potential infinite loops caused by re-triggering navigation effects.
+2️⃣ Splash Screen Handling – Possible UI Lag
+🚨 Issue:
+SplashScreen.hideAsync() is called inside handleNavigation(), but what if an async operation delays this?
+Users might see a black screen for a moment instead of an instant transition.
+🔧 Solution:
+Call SplashScreen.hideAsync() right after initialization in initialize().
+tsx
+Copy
+Edit
+await SplashScreen.hideAsync();
+setInitialized(true);
+✅ Why?
+
+Prevents UI delay and ensures a smooth transition.
+3️⃣ Profile Fetching – Redundant Queries & Inefficient Error Handling
+🚨 Issue:
+If the user is authenticated, you fetch the profile twice:
+Once in initialize()
+Again in handleNavigation()
+Error handling is weak:
+It assumes error.code === 'PGRST116' means a missing profile.
+What if it's a different error (e.g., database issues)?
+🔧 Solution:
+Fetch profile once and store it globally in Redux.
+Improve error handling by distinguishing between different cases.
+tsx
+Copy
+Edit
+const [profile, setProfileState] = useState(null);
+
+useEffect(() => {
+  async function loadProfile() {
+    if (!session) return;
+
+    try {
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.log('📝 Profile not found, creating...');
+          const newProfile = await profileService.createProfile(session.user.id);
+          store.dispatch(setProfile(newProfile));
+          setProfileState(newProfile);
+        } else {
+          throw error;
+        }
+      } else {
+        store.dispatch(setProfile(profile));
+        setProfileState(profile);
+      }
+    } catch (error) {
+      console.error('❌ Profile fetch failed:', error);
+    }
+  }
+
+  loadProfile();
+}, [session]);
+✅ Why?
+
+Avoids duplicate queries.
+Ensures Redux holds the latest profile state.
+Handles unexpected database errors gracefully.
+4️⃣ Navigation Redirects – Possible Flickering & Extra Computation
+🚨 Issue:
+The handleNavigation() function relies on segments[0], which may change frequently.
+The logic inside handleNavigation() might run multiple times unnecessarily, causing redirect flickering.
+Edge case:
+If session is null, router.replace('/(auth)/sign-in')` is called multiple times, leading to unnecessary navigation actions.
+🔧 Solution:
+Use useMemo to store computed navigation decisions.
+Debounce unnecessary redirections.
+tsx
+Copy
+Edit
+useEffect(() => {
+  if (!initialized || !session) return;
+
+  async function navigate() {
+    await SplashScreen.hideAsync();
+
+    const targetRoute = !session
+      ? '/(auth)/sign-in'
+      : profile?.gender && profile?.workout_frequency && profile?.goal_type
+        ? '/(tabs)'
+        : '/(onboarding)/gender';
+
+    if (segments[0] !== targetRoute) {
+      router.replace(targetRoute);
+    }
+  }
+
+  navigate();
+}, [initialized, session, profile]);
+✅ Why?
+
+Prevents unnecessary re-renders.
+Eliminates flickering caused by multiple router.replace() calls.
+Improves app performance.
+5️⃣ Code Readability – Move Complex Logic to Custom Hooks
+🚨 Issue:
+Too much business logic inside RootLayout().
+Makes it harder to test and debug.
+🔧 Solution:
+Move session/profile management into custom hooks.
+Create useAuthSession.ts
+tsx
+Copy
+Edit
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { store } from '@/store';
+import { setSession } from '@/store/slices/authSlice';
+
+export function useAuthSession() {
+  const [session, setSessionState] = useState(null);
+
+  useEffect(() => {
+    async function fetchSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSessionState(session);
+      store.dispatch(setSession(session));
+    }
+
+    fetchSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionState(session);
+      store.dispatch(setSession(session));
+    });
+
+    return () => authListener?.subscription.unsubscribe();
+  }, []);
+
+  return session;
+}
+Create useUserProfile.ts
+tsx
+Copy
+Edit
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { store } from '@/store';
+import { setProfile } from '@/store/slices/profileSlice';
+
+export function useUserProfile(session) {
+  const [profile, setProfileState] = useState(null);
+
+  useEffect(() => {
+    if (!session) return;
+
+    async function loadProfile() {
+      try {
+        const { data: profile, error } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error && error.code === 'PGRST116') {
+          console.log('📝 Profile not found, creating...');
+          const newProfile = await profileService.createProfile(session.user.id);
+          store.dispatch(setProfile(newProfile));
+          setProfileState(newProfile);
+        } else {
+          store.dispatch(setProfile(profile));
+          setProfileState(profile);
+        }
+      } catch (error) {
+        console.error('❌ Profile fetch failed:', error);
+      }
+    }
+
+    loadProfile();
+  }, [session]);
+
+  return profile;
+}
+Update RootLayout.tsx
+tsx
+Copy
+Edit
+export default function RootLayout() {
+  const session = useAuthSession();
+  const profile = useUserProfile(session);
+  const initialized = !!session; // Simplified flag
+
+  if (!initialized) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Provider store={store}>
+      <PaperProvider theme={colorScheme === 'dark' ? theme.dark : theme.light}>
+        <View style={{ flex: 1 }}>
+          <Slot />
+        </View>
+      </PaperProvider>
+    </Provider>
+  );
+}
+✅ Why?
+
+Separation of concerns → Makes RootLayout.tsx cleaner.
+Easier debugging and testing.
+Prevents unnecessary state updates and improves performance.
+🚀 Final Verdict
+Your structure is good, but fixing the redundant queries, session fetching, and navigation flickering will make your app:
+
+More efficient
+More reliable
+Easier to maintain
+Would you like a fully refactored version of _layout.tsx incorporating these fixes? 🚀

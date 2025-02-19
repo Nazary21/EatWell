@@ -16,21 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "newArchEnabled": true,
-      "bundleIdentifier": "com.getwell.caltrackerreact",
-      "config": {
-        "googleSignIn": {
-          "reservedClientId": "963420431336-5fj4ri1jsqoveensf9bf619f14o4qun8.apps.googleusercontent.com"
-        }
-      }
+      "bundleIdentifier": "com.getwell.caltrackerreact"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.getwell.caltrackerreact",
-      "newArchEnabled": true
+      "package": "com.getwell.caltrackerreact"
     },
     "web": {
       "favicon": "./assets/favicon.png"

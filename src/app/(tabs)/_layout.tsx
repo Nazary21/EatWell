@@ -1,30 +1,19 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import { useEffect } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabsLayout() {
   const theme = useTheme();
-
-  useEffect(() => {
-    console.log('📑 Tab Navigation Initialized');
-    console.log('🎨 Theme loaded:', {
-      primary: theme.colors.primary,
-      mode: theme.dark ? 'dark' : 'light'
-    });
-  }, [theme]);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: true,
         tabBarActiveTintColor: theme.colors.primary,
-      }}
-      screenListeners={{
-        state: (e) => {
-          console.log('🔄 Navigation State Changed:', {
-            route: e.data.state.routes[e.data.state.index].name,
-            timestamp: new Date().toISOString()
-          });
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outline,
         },
       }}
     >
@@ -33,13 +22,29 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarLabel: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="test"
+        name="meals"
         options={{
-          title: 'Test',
-          tabBarLabel: 'Test',
+          title: 'Meals',
+          tabBarLabel: 'Meals',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="food-apple" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="insights"
+        options={{
+          title: 'Insights',
+          tabBarLabel: 'Insights',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="chart-line" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -47,6 +52,9 @@ export default function TabsLayout() {
         options={{
           title: 'Profile',
           tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

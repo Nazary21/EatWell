@@ -1783,3 +1783,224 @@ Each component must be:
 - Regular test status reviews and maintenance
 
 For detailed testing guidelines and current status, see [Tests-specs-log.md](./Tests-specs-log.md).
+
+# Project Specifications
+
+## Configuration Architecture
+
+### File Structure
+```
+CalTrackerReact/
+├── app.config.ts           # Expo configuration (TypeScript)
+├── babel.config.js         # Babel configuration
+├── metro.config.js         # Metro bundler configuration
+├── tsconfig.json          # TypeScript configuration
+├── .eslintrc.js           # ESLint configuration
+└── jest.setup.ts          # Jest test setup
+```
+
+### Configuration Best Practices
+
+#### 1. TypeScript Configurations
+- **app.config.ts**: Type-safe Expo configuration
+  - Uses `ExpoConfig` type from Expo
+  - Provides autocomplete and type checking
+  - Handles environment variables safely
+  - Configures plugins and platform-specific settings
+
+#### 2. JavaScript Configurations
+- **babel.config.js**: Build tool configuration
+  - Manages transpilation settings
+  - Configures module aliases
+  - Handles platform-specific plugins
+- **metro.config.js**: React Native bundler
+  - Configures module resolution
+  - Manages asset handling
+  - Sets up development server
+
+#### 3. Testing Configuration
+- **jest.setup.ts**: Test environment setup
+  - TypeScript-based configuration
+  - Mocks and global test setup
+  - Custom test utilities
+
+### Environment Configuration
+```typescript
+// app.config.ts
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  // ... base config
+  extra: {
+    supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+  },
+});
+```
+
+## Project Architecture
+
+### 1. Directory Structure
+```
+src/
+├── app/                    # Expo Router pages
+├── components/            # React components
+│   ├── core/             # Reusable UI components
+│   └── features/         # Feature-specific components
+├── lib/                  # Core utilities
+├── services/            # Business logic & API calls
+├── store/               # State management
+├── types/               # TypeScript types
+└── theme/               # UI theming
+```
+
+### 2. Key Technologies
+
+#### Frontend
+- React Native (0.72.6)
+- Expo SDK 49
+- TypeScript 5.1
+- React Native Paper v5
+
+#### Backend
+- Supabase
+- PostgreSQL
+- Row Level Security
+
+#### State Management
+- Redux Toolkit
+- Async Storage
+
+#### Navigation
+- Expo Router 2.0
+- Type-safe routing
+- Deep linking support
+
+### 3. Authentication Flow
+```mermaid
+graph TD
+    A[App Start] --> B{Check Session}
+    B -->|No Session| C[Sign In Screen]
+    B -->|Has Session| D{Check Profile}
+    D -->|No Profile| E[Create Profile]
+    D -->|Has Profile| F[Main App]
+```
+
+### 4. Data Flow
+```mermaid
+graph LR
+    A[UI Components] --> B[Redux Actions]
+    B --> C[Redux Store]
+    C --> D[Supabase Service]
+    D --> E[Database]
+```
+
+## Development Guidelines
+
+### 1. Code Style
+- Use TypeScript for all new files
+- Follow ESLint configuration
+- Use Prettier for formatting
+- Follow React Native best practices
+
+### 2. Component Structure
+- Atomic design principles
+- Proper type definitions
+- Documentation for complex components
+- Unit tests for business logic
+
+### 3. State Management
+- Redux for global state
+- Local state for UI components
+- Proper type safety
+- Middleware for side effects
+
+### 4. Testing Strategy
+- Jest for unit testing
+- React Native Testing Library
+- E2E testing with Maestro
+- Coverage requirements
+
+## Performance Considerations
+
+### 1. Bundle Size
+- Proper code splitting
+- Lazy loading where appropriate
+- Asset optimization
+- Tree shaking enabled
+
+### 2. Memory Management
+- Proper cleanup in useEffect
+- Image optimization
+- List virtualization
+- Memory leak prevention
+
+### 3. Network
+- Proper caching strategy
+- Offline support
+- Request batching
+- Error handling
+
+## Security Measures
+
+### 1. Authentication
+- Secure token storage
+- Proper session management
+- OAuth integration
+- Biometric authentication
+
+### 2. Data Protection
+- Row Level Security
+- Encrypted storage
+- Secure API calls
+- Input validation
+
+## Deployment Strategy
+
+### 1. Environment Management
+```typescript
+// Different configurations per environment
+export const getEnvironmentConfig = () => ({
+  development: {
+    // Development settings
+  },
+  staging: {
+    // Staging settings
+  },
+  production: {
+    // Production settings
+  },
+});
+```
+
+### 2. Release Process
+- Version management
+- Automated builds
+- Testing requirements
+- Staged rollouts
+
+## Monitoring & Analytics
+
+### 1. Error Tracking
+- Error boundary implementation
+- Crash reporting
+- Performance monitoring
+- User feedback collection
+
+### 2. Analytics
+- User behavior tracking
+- Performance metrics
+- Feature usage
+- Conversion tracking
+
+## Maintenance
+
+### 1. Regular Updates
+- Dependency updates
+- Security patches
+- Performance optimizations
+- Feature additions
+
+### 2. Documentation
+- Keep technical docs updated
+- Maintain changelog
+- Update API documentation
+- Component documentation

@@ -17,7 +17,7 @@ const SignUpScreen = () => {
     setError('');
     try {
       await signUpWithEmail({ email, password });
-      router.replace('/(tabs)');
+      router.replace('/(onboarding)/gender');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign up');
     } finally {

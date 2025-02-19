@@ -4,9 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
 
 // Initialize Supabase client
-// Replace these with your Supabase project URL and anon key
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = 'https://vnsnvefysmblaxmrncgp.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuc252ZWZ5c21ibGF4bXJuY2dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzMDc1MzgsImV4cCI6MjA1NDg4MzUzOH0.JXPgTA46O1bv5NPGmDUEjT-BUHzAOHms9e6JIO0nX_Y';
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {

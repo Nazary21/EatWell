@@ -1,36 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface UserProfile {
-  id: string;
-  user_id: string;
-  name?: string;
-  gender?: string;
-  birth_date?: string;
-  height?: number;
-  current_weight?: number;
-  target_weight?: number;
-  activity_level?: string;
-  dietary_preferences?: string[];
-  workout_frequency?: number;
-  weight_goal?: string;
-  goal_timeline?: string;
-  obstacles?: string[];
-}
+import { UserProfile } from '@/types/profile';
 
 interface ProfileState {
-  profile: UserProfile | null;
-  isLoading: boolean;
+  data: UserProfile | null;
+  loading: boolean;
   error: string | null;
-  onboardingCompleted: boolean;
-  subscriptionStatus: 'free' | 'premium';
 }
 
 const initialState: ProfileState = {
-  profile: null,
-  isLoading: false,
+  data: null,
+  loading: false,
   error: null,
-  onboardingCompleted: false,
-  subscriptionStatus: 'free',
 };
 
 const profileSlice = createSlice({
@@ -38,34 +18,27 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     setProfile: (state, action: PayloadAction<UserProfile>) => {
-      state.profile = action.payload;
-      state.isLoading = false;
+      state.data = action.payload;
       state.error = null;
     },
     updateProfile: (state, action: PayloadAction<Partial<UserProfile>>) => {
-      if (state.profile) {
-        state.profile = { ...state.profile, ...action.payload };
+      if (state.data) {
+        state.data = {
+          ...state.data,
+          ...action.payload,
+        };
       }
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+      state.loading = action.payload;
     },
-    setError: (state, action: PayloadAction<string | null>) => {
+    setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.isLoading = false;
-    },
-    setOnboardingCompleted: (state, action: PayloadAction<boolean>) => {
-      state.onboardingCompleted = action.payload;
-    },
-    setSubscriptionStatus: (state, action: PayloadAction<'free' | 'premium'>) => {
-      state.subscriptionStatus = action.payload;
+      state.loading = false;
     },
     clearProfile: (state) => {
-      state.profile = null;
-      state.isLoading = false;
+      state.data = null;
       state.error = null;
-      state.onboardingCompleted = false;
-      state.subscriptionStatus = 'free';
     },
   },
 });
@@ -75,8 +48,6 @@ export const {
   updateProfile,
   setLoading,
   setError,
-  setOnboardingCompleted,
-  setSubscriptionStatus,
   clearProfile,
 } = profileSlice.actions;
 
