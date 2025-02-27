@@ -1,9 +1,9 @@
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Text, Switch, Button, useTheme, Divider } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { saveUserProfile, clearUserProfile } from '@/features/user/slice';
 import { useState, useCallback, useEffect } from 'react';
-import { UserProfile } from '@/features/user/types';
+import { UserProfile, UserPreferences } from '@/features/user/types';
 
 export default function SettingsScreen() {
   const theme = useTheme();
@@ -11,10 +11,10 @@ export default function SettingsScreen() {
   const { profile, isLoading } = useAppSelector((state) => state.user);
 
   // Local state for form
-  const [preferences, setPreferences] = useState({
-    theme: 'light' as const,
+  const [preferences, setPreferences] = useState<UserPreferences>({
+    theme: 'light',
     notifications: true,
-    measurementSystem: 'metric' as const,
+    measurementSystem: 'metric',
     language: 'en'
   });
 
@@ -110,7 +110,7 @@ export default function SettingsScreen() {
 
       <View style={styles.section}>
         <Text variant="titleLarge" style={styles.sectionTitle}>Current Profile</Text>
-        <Text variant="bodyMedium">
+        <Text variant="bodyMedium" style={styles.json}>
           {profile ? JSON.stringify(profile, null, 2) : 'No profile set'}
         </Text>
       </View>
@@ -144,5 +144,12 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 4,
+  },
+  json: {
+    fontFamily: Platform.select({
+      ios: '.SFMono-Regular',
+      android: 'monospace',
+    }),
+    fontSize: 12,
   },
 }); 
