@@ -5,6 +5,21 @@ import { saveUserProfile, clearUserProfile } from '@/features/user/slice';
 import { useState, useCallback, useEffect } from 'react';
 import { UserProfile, UserPreferences } from '@/features/user/types';
 
+// Custom component for JSON display
+function JsonDisplay({ data }: { data: any }) {
+  if (!data) return <Text>No data</Text>;
+  
+  const formattedJson = JSON.stringify(data, null, 2)
+    .split('\\n')
+    .map((line, i) => (
+      <Text key={i} style={styles.jsonLine}>
+        {line}
+      </Text>
+    ));
+
+  return <View style={styles.jsonContainer}>{formattedJson}</View>;
+}
+
 export default function SettingsScreen() {
   const theme = useTheme();
   const dispatch = useAppDispatch();
@@ -110,9 +125,7 @@ export default function SettingsScreen() {
 
       <View style={styles.section}>
         <Text variant="titleLarge" style={styles.sectionTitle}>Current Profile</Text>
-        <Text variant="bodyMedium" style={styles.json}>
-          {profile ? JSON.stringify(profile, null, 2) : 'No profile set'}
-        </Text>
+        <JsonDisplay data={profile} />
       </View>
     </ScrollView>
   );
@@ -145,11 +158,14 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 4,
   },
-  json: {
-    fontFamily: Platform.select({
-      ios: '.SFMono-Regular',
-      android: 'monospace',
-    }),
+  jsonContainer: {
+    backgroundColor: '#f5f5f5',
+    padding: 12,
+    borderRadius: 8,
+  },
+  jsonLine: {
     fontSize: 12,
+    lineHeight: 20,
+    letterSpacing: -0.5,
   },
 }); 
