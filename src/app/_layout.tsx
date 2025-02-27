@@ -1,22 +1,35 @@
 import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '@/lib/store';
+import { useAppDispatch } from '@/lib/store/hooks';
 
-export default function RootLayout() {
+// Separate component for app initialization logic
+function AppInitializer() {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     console.log('🚀 App Initialized');
     console.log('📱 React Native Paper Provider mounted');
     console.log('🧭 Navigation system ready');
   }, []);
 
+  return null;
+}
+
+export default function RootLayout() {
   return (
-    <PaperProvider>
-      <Stack>
-        <Stack.Screen 
-          name="(tabs)" 
-          options={{ headerShown: false }}
-        />
-      </Stack>
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider>
+        <AppInitializer />
+        <Stack>
+          <Stack.Screen 
+            name="(tabs)" 
+            options={{ headerShown: false }}
+          />
+        </Stack>
+      </PaperProvider>
+    </Provider>
   );
 } 
