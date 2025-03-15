@@ -1,100 +1,158 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Platform, Image, Pressable } from 'react-native';
 import { Text, useTheme, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '@/shared/components/ui/ScreenHeader';
-import { MealCard } from '@/shared/components/ui/MealCard';
-import { ActionButton } from '@/shared/components/ui/ActionButton';
+import { StatsCard } from '@/shared/components/ui/StatsCard';
+import { MacroRatioCard } from '@/shared/components/ui/MacroRatioCard';
+import { AddFoodCard } from '@/shared/components/ui/AddFoodCard';
+import { FoodEntryCard } from '@/shared/components/ui/FoodEntryCard';
+import { PlusIcon } from '@/shared/components/ui/PlusIcon';
 import { CustomTheme } from '@/lib/theme/types';
 import { useNutrition } from '@/features/nutrition/context/NutritionContext';
+import { useUser } from '@/features/user/context/UserContext';
 
 export default function HomeScreen() {
   const theme = useTheme<CustomTheme>();
+  const { user } = useUser();
   const { todayMeals, recentMeals, dailyNutrition, isLoading } = useNutrition();
+  const [fabPressed, setFabPressed] = useState(false);
+  
+  // Sample data for macronutrient ratio
+  const macroData = {
+    carbs: 21,
+    protein: 24,
+    fat: 55,
+    status: 'Balanced',
+    statusColor: '#4CAF50',
+  };
+
+  // Mock food entry data with descriptions and tags
+  const foodEntries = [
+    {
+      id: '1',
+      title: 'Breakfast',
+      description: 'Oatmeal, eggs, coffee and salad',
+      calories: 867,
+      time: '9:34 AM',
+      image: require('@/assets/breakfast.png'),
+      tag: { text: 'Protein rich', color: '#FF4500', icon: 'food-drumstick' },
+    },
+    {
+      id: '2',
+      title: 'Lunch',
+      description: 'Pork steak, chips and coke',
+      calories: 920,
+      time: '1:34 PM',
+      tag: { text: 'Micro elements rich', color: '#4CAF50', icon: 'leaf' },
+    },
+  ];
+
+  const handleAddPhoto = () => {
+    console.log('Photo pressed');
+  };
+
+  const handleAddWriteDown = () => {
+    console.log('Write down pressed');
+  };
+
+  const handleAddBarcode = () => {
+    console.log('Barcode pressed');
+  };
+
+  const handleAddMeal = () => {
+    console.log('Add meal pressed');
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['right', 'left']}>
-      <ScreenHeader title="Today" rightIcon="bell-outline" onRightIconPress={() => console.log('Notifications')} />
+      <ScreenHeader 
+        title={`Hey, ${user?.name?.split(' ')[0] || 'there'}`} 
+        rightIcon="bell-outline" 
+        onRightIconPress={() => console.log('Notifications')} 
+      />
       
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Daily Summary Section */}
-        <View style={styles.summaryContainer}>
-          <View style={[styles.progressCircle, { borderColor: theme.colors.primary }]}>
-            <Text variant="headlineMedium" style={styles.caloriesText}>
-              {dailyNutrition?.totalCalories || 0}
+        {/* Stats Cards Row */}
+        <View style={styles.statsRow}>
+          <StatsCard 
+            title="Daily Calories" 
+            value={dailyNutrition?.totalCalories || 0}
+            subtitle="<2800 goal"
+            style={styles.statsCard}
+          />
+          <StatsCard 
+            title="Nutri score" 
+            value="45%"
+            badgeText="Unhealthy"
+            badgeColor="#FF9800"
+            style={styles.statsCard}
+          />
+        </View>
+        
+        {/* Macronutrients Ratio */}
+        <MacroRatioCard 
+          carbsPercentage={macroData.carbs}
+          proteinPercentage={macroData.protein}
+          fatPercentage={macroData.fat}
+          status={macroData.status}
+          statusColor={macroData.statusColor}
+        />
+        
+        {/* Add Food Entry Card */}
+        <AddFoodCard 
+          onPhotoPress={handleAddPhoto}
+          onWritePress={handleAddWriteDown}
+          onBarcodePress={handleAddBarcode}
+        />
+        
+        {/* Food Tracking Section */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeaderRow}>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Food tracking
             </Text>
-            <Text variant="bodySmall">kcal</Text>
+            <TouchableOpacity onPress={() => console.log('See all pressed')}>
+              <Text style={[styles.seeAllText, { color: theme.colors.primary }]}>
+                See all
+              </Text>
+            </TouchableOpacity>
           </View>
           
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text variant="titleMedium">2000</Text>
-              <Text variant="bodySmall">Goal</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text variant="titleMedium">{2000 - (dailyNutrition?.totalCalories || 0)}</Text>
-              <Text variant="bodySmall">Left</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text variant="titleMedium">{dailyNutrition?.totalProtein || 0}g</Text>
-              <Text variant="bodySmall">Protein</Text>
-            </View>
+          <View style={styles.entriesContainer}>
+            {foodEntries.map(entry => (
+              <FoodEntryCard
+                key={entry.id}
+                title={entry.title}
+                description={entry.description}
+                calories={entry.calories}
+                time={entry.time}
+                image={entry.image}
+                tag={entry.tag}
+                onPress={() => console.log(`Entry ${entry.id} pressed`)}
+              />
+            ))}
           </View>
-        </View>
-
-        {/* Today's Meals Section */}
-        <View style={styles.sectionContainer}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>
-            Today's Meals
-          </Text>
-          
-          {todayMeals.length > 0 ? (
-            todayMeals.map((meal) => (
-              <MealCard
-                key={meal.id}
-                title={meal.name}
-                time={new Date(meal.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                calories={meal.totalCalories}
-                onPress={() => console.log('Meal pressed:', meal.id)}
-              />
-            ))
-          ) : (
-            <Text style={styles.emptyText}>No meals added yet today</Text>
-          )}
-        </View>
-
-        <Divider style={styles.divider} />
-
-        {/* Recent Meals Section */}
-        <View style={styles.sectionContainer}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>
-            Recent Meals
-          </Text>
-          
-          {recentMeals.length > 0 ? (
-            recentMeals.map((meal) => (
-              <MealCard
-                key={meal.id}
-                title={meal.name}
-                time={new Date(meal.dateTime).toLocaleDateString()}
-                calories={meal.totalCalories}
-                onPress={() => console.log('Meal pressed:', meal.id)}
-              />
-            ))
-          ) : (
-            <Text style={styles.emptyText}>No recent meals</Text>
-          )}
         </View>
       </ScrollView>
 
-      <ActionButton
-        icon="plus"
-        onPress={() => console.log('Add meal')}
-      />
+      <View style={styles.fabContainer}>
+        <Pressable 
+          style={({ pressed }) => [
+            styles.fab, 
+            { backgroundColor: pressed ? '#4D4D4D' : '#333333' } // Change tone when pressed
+          ]}
+          onPress={handleAddMeal}
+          onPressIn={() => setFabPressed(true)}
+          onPressOut={() => setFabPressed(false)}
+        >
+          <PlusIcon size={28} color="white" />
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
@@ -102,52 +160,58 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F0F0F0', // Updated to tertiary surface color
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 80, // Space for the FAB
-  },
-  summaryContainer: {
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  progressCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  caloriesText: {
-    fontWeight: 'bold',
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80, // More space for iOS
   },
   statsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'space-between',
     marginTop: 8,
+    marginBottom: 16,
+    gap: 16, // Added to ensure 16px gap between cards
   },
-  statItem: {
-    alignItems: 'center',
+  statsCard: {
+    flex: 1, // Use flex instead of width % for proper gap handling
+    marginHorizontal: 0, // Remove horizontal margin to match design
+    height: 'auto', // Remove fixed height to prevent padding glitch
   },
   sectionContainer: {
-    marginVertical: 16,
+    marginTop: 16,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   sectionTitle: {
     fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 22, // Adjust size to match design
   },
-  emptyText: {
-    textAlign: 'center',
-    marginVertical: 20,
-    opacity: 0.6,
+  seeAllText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
-  divider: {
-    marginVertical: 16,
+  entriesContainer: {
+    marginTop: 4,
+  },
+  fabContainer: {
+    position: 'absolute',
+    right: 16,
+    bottom: Platform.OS === 'ios' ? 24 : 16, // 12px margin from navbar
+  },
+  fab: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16, // Inner padding as requested
   },
 }); 

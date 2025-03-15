@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createTheme } from '@/lib/theme';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { AppProvider } from '@/features/core/providers/AppProvider';
 import { useFonts } from 'expo-font';
@@ -14,25 +14,41 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const colorScheme = useColorScheme();
   const theme = createTheme(colorScheme === 'dark');
+  const [fontError, setFontError] = useState(false);
   
-  // Load any required fonts
-  const [fontsLoaded] = useFonts({
-    // No custom fonts for now, but we still want to wait for system fonts
-  });
+  // Font definitions for Android
+  const fontAssets = Platform.OS === 'android' 
+    ? {
+        'Inter': require('./assets/fonts/Inter-Regular.ttf'),
+        'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
+        'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
+        'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
+      } 
+    : {};
+  
+  // Load any required fonts (Inter for Android)
+  const [fontsLoaded] = useFonts(fontAssets);
   
   // Hide splash screen when ready
   useEffect(() => {
     async function hideSplash() {
-      if (fontsLoaded) {
+      try {
+        // Hide splash screen if fonts loaded or we're on iOS (using system fonts)
+        if (fontsLoaded || Platform.OS === 'ios' || fontError) {
+          await SplashScreen.hideAsync();
+        }
+      } catch (e) {
+        console.error('Error hiding splash screen:', e);
+        setFontError(true);
         await SplashScreen.hideAsync();
       }
     }
     
     hideSplash();
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
   
-  // Keep showing splash screen until fonts are loaded
-  if (!fontsLoaded) {
+  // If fonts are still loading and we're on Android, wait
+  if (!fontsLoaded && Platform.OS === 'android' && !fontError) {
     return null;
   }
 

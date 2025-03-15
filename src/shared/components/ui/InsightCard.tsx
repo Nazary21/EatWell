@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Surface, useTheme, IconButton } from 'react-native-paper';
+import { Text, useTheme, IconButton } from 'react-native-paper';
+import { CustomSurface } from './CustomSurface';
 import { CustomTheme } from '@/lib/theme/types';
 
 interface InsightCardProps {
@@ -27,13 +28,12 @@ export const InsightCard: React.FC<InsightCardProps> = ({
   const cardColor = color || theme.colors.primary;
 
   return (
-    <Surface
+    <CustomSurface
       style={[
         styles.container,
         {
           backgroundColor: theme.colors.surface,
           borderRadius: theme.custom.radius.md,
-          ...theme.custom.elevation.md,
         },
       ]}
       onTouchEnd={onPress}
@@ -64,7 +64,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           </Text>
         )}
       </View>
-    </Surface>
+    </CustomSurface>
   );
 };
 

@@ -1,6 +1,7 @@
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { ThemeMode } from '@/shared/types/common';
 import { colors, spacing, radius, elevation, typography } from './tokens';
+import { getFontConfig } from './fonts';
 
 // Semantic tokens that map our color primitives to their usage
 const lightSemanticTokens = {
@@ -42,6 +43,9 @@ const darkSemanticTokens = {
 type FontScale = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl' | 'display';
 type LetterSpacing = 'tight' | 'normal' | 'wide' | 'wider' | 'widest';
 
+// Valid font weight values
+type FontWeight = '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | 'bold' | 'normal';
+
 // Convert our typography scale to MD3Type format
 const createFontConfig = () => {
   const fontConfig: Record<string, any> = {};
@@ -51,7 +55,7 @@ const createFontConfig = () => {
     fontConfig[scale] = {
       fontFamily: 'System',
       fontSize: typography.size[scale],
-      fontWeight: '400',
+      fontWeight: '400' as FontWeight, // Cast to the correct type
       letterSpacing: typography.letterSpacing.normal, // Default to normal letter spacing
       lineHeight: typography.lineHeight[scale],
     };
@@ -64,7 +68,9 @@ const createFontConfig = () => {
 export const createTheme = (isLight: boolean) => {
   const baseTheme = isLight ? MD3LightTheme : MD3DarkTheme;
   const semanticTokens = isLight ? lightSemanticTokens : darkSemanticTokens;
+  const { fontConfig } = getFontConfig();
 
+  // Since we're extending the base theme, just use its structure
   return {
     ...baseTheme,
     colors: {
@@ -81,10 +87,13 @@ export const createTheme = (isLight: boolean) => {
       outline: semanticTokens.placeholder,
     },
     roundness: radius.md,
+    // Use font config directly
+    fonts: fontConfig,
     custom: {
       spacing,
       radius,
       elevation,
+      typography,
     },
   };
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Surface, useTheme, Avatar } from 'react-native-paper';
+import { Text, useTheme, Avatar, Surface } from 'react-native-paper';
 import { CustomTheme } from '@/lib/theme/types';
 
 interface ChatMessageProps {
@@ -34,7 +34,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           label="AI"
           style={styles.avatar}
           color="white"
-          backgroundColor={theme.colors.secondary}
+          theme={{ colors: { primary: theme.colors.secondary } }}
         />
       )}
 
@@ -48,6 +48,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             marginRight: isUser ? 8 : 0,
           },
         ]}
+        elevation={0} // Explicitly set to 0 to remove shadow
       >
         <Text
           style={{
@@ -74,7 +75,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           label="Me" 
           style={styles.avatar}
           color="white"
-          backgroundColor={theme.colors.primary}
+          theme={{ colors: { primary: theme.colors.primary } }}
         />
       )}
     </View>

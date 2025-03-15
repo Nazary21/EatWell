@@ -1,9 +1,16 @@
+import React from 'react';
+import { Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SvgIcon } from '@/shared/components/ui/SvgIcon';
+import { HOME_ICON, CHAT_ICON, INSIGHTS_ICON, PROFILE_ICON } from '@/shared/components/ui/TabIcons';
+import { CustomTheme } from '@/lib/theme/types';
 
 export default function TabsLayout() {
-  const theme = useTheme();
+  const theme = useTheme<CustomTheme>();
+  
+  // Add extra padding for iOS devices with home indicator
+  const bottomPadding = Platform.OS === 'ios' ? 32 : 16;
 
   return (
     <Tabs
@@ -11,7 +18,11 @@ export default function TabsLayout() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.backdrop,
         tabBarLabelStyle: { fontSize: 12 },
-        tabBarStyle: { height: 60, paddingBottom: 8, paddingTop: 4 },
+        tabBarStyle: { 
+          height: 60 + bottomPadding, 
+          paddingBottom: bottomPadding, 
+          paddingTop: 4 
+        },
         headerShown: false, // Hide the header as per the design
       }}
       initialRouteName="index"
@@ -21,7 +32,7 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
+            <SvgIcon xml={HOME_ICON} width={size} height={size} color={color} />
           ),
         }}
       />
@@ -30,7 +41,7 @@ export default function TabsLayout() {
         options={{
           title: 'Chat',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="chat" size={size} color={color} />
+            <SvgIcon xml={CHAT_ICON} width={size} height={size} color={color} />
           ),
         }}
       />
@@ -39,7 +50,7 @@ export default function TabsLayout() {
         options={{
           title: 'Insights',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="chart-bar" size={size} color={color} />
+            <SvgIcon xml={INSIGHTS_ICON} width={size} height={size} color={color} />
           ),
         }}
       />
@@ -48,7 +59,7 @@ export default function TabsLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" size={size} color={color} />
+            <SvgIcon xml={PROFILE_ICON} width={size} height={size} color={color} />
           ),
         }}
       />

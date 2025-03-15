@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, ImageSourcePropType } from 'react-native';
-import { Text, Surface, useTheme, IconButton } from 'react-native-paper';
+import { Text, useTheme, IconButton } from 'react-native-paper';
+import { CustomSurface } from './CustomSurface';
 import { CustomTheme } from '@/lib/theme/types';
 
 interface ProfileCardProps {
@@ -22,13 +23,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const theme = useTheme<CustomTheme>();
 
   return (
-    <Surface
+    <CustomSurface
       style={[
         styles.container,
         {
           backgroundColor: theme.colors.surface,
           borderRadius: theme.custom.radius.md,
-          ...theme.custom.elevation.md,
         },
       ]}
     >
@@ -71,7 +71,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           style={styles.editButton}
         />
       </View>
-    </Surface>
+    </CustomSurface>
   );
 };
 
