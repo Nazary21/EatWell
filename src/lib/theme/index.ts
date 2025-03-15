@@ -5,11 +5,13 @@ import { colors, spacing, radius, elevation, typography } from './tokens';
 // Semantic tokens that map our color primitives to their usage
 const lightSemanticTokens = {
   primary: colors.purple[500],
-  secondary: colors.red[400],
+  secondary: colors.green[500],
+  tertiary: colors.red[400],
   background: colors.neutral[50],
   surface: colors.neutral[50],
+  surfaceVariant: colors.neutral[100],
   text: colors.neutral[900],
-  accent: colors.green[500],
+  accent: colors.red[400],
   error: colors.red[500],
   success: colors.green[500],
   info: colors.blue[500],
@@ -18,6 +20,7 @@ const lightSemanticTokens = {
   placeholder: colors.neutral[400],
   backdrop: 'rgba(0, 0, 0, 0.5)',
   onSurface: colors.neutral[900],
+  onSurfaceVariant: colors.neutral[700],
   elevation: {
     level0: elevation.none.shadowColor,
     level1: elevation.sm.shadowColor,
@@ -28,10 +31,12 @@ const lightSemanticTokens = {
 
 const darkSemanticTokens = {
   ...lightSemanticTokens,
-  background: colors.neutral[900],
-  surface: colors.neutral[800],
-  text: colors.neutral[50],
-  onSurface: colors.neutral[50],
+  background: colors.darkTheme.background,
+  surface: colors.darkTheme.surface,
+  surfaceVariant: colors.darkTheme.surfaceVariant,
+  text: colors.darkTheme.onSurface,
+  onSurface: colors.darkTheme.onSurface,
+  onSurfaceVariant: colors.darkTheme.onSurfaceVariant,
 };
 
 type FontScale = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl' | 'display';
@@ -56,19 +61,24 @@ const createFontConfig = () => {
 };
 
 // Create base themes with proper structure for Paper
-const createTheme = (isLight: boolean) => {
+export const createTheme = (isLight: boolean) => {
   const baseTheme = isLight ? MD3LightTheme : MD3DarkTheme;
+  const semanticTokens = isLight ? lightSemanticTokens : darkSemanticTokens;
 
   return {
     ...baseTheme,
     colors: {
       ...baseTheme.colors,
-      primary: colors.purple[500],
-      secondary: colors.red[400],
-      background: isLight ? colors.neutral[50] : colors.neutral[900],
-      surface: isLight ? colors.neutral[50] : colors.neutral[800],
-      error: colors.red[500],
-      onSurface: isLight ? colors.neutral[900] : colors.neutral[50],
+      primary: semanticTokens.primary,
+      secondary: semanticTokens.secondary,
+      tertiary: semanticTokens.tertiary,
+      background: semanticTokens.background,
+      surface: semanticTokens.surface,
+      surfaceVariant: semanticTokens.surfaceVariant,
+      error: semanticTokens.error,
+      onSurface: semanticTokens.onSurface,
+      onSurfaceVariant: semanticTokens.onSurfaceVariant,
+      outline: semanticTokens.placeholder,
     },
     roundness: radius.md,
     custom: {

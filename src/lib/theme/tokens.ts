@@ -19,35 +19,7 @@ export const colors = {
     900: '#1F177A'
   },
   
-  // Secondary Red Scale
-  red: {
-    50: '#FFF3F3',
-    100: '#FFE6E6',
-    200: '#FFB3B3',
-    300: '#FF8080',
-    400: '#FF6B6B', // Our secondary color
-    500: '#FF4D4D',
-    600: '#DB3A3A',
-    700: '#B72B2B',
-    800: '#931F1F',
-    900: '#7A1717'
-  },
-
-  // Neutral Scale
-  neutral: {
-    50: '#F7F7F7',  // Surface background
-    100: '#E6E6E6',
-    200: '#CCCCCC',
-    300: '#B3B3B3',
-    400: '#999999',
-    500: '#808080',
-    600: '#666666',
-    700: '#4D4D4D',
-    800: '#333333',
-    900: '#2D3142'  // Text color
-  },
-
-  // Success Green Scale
+  // Secondary Green Scale
   green: {
     50: '#E8F5E9',
     100: '#C8E6C9',
@@ -59,6 +31,34 @@ export const colors = {
     700: '#388E3C',
     800: '#2E7D32',
     900: '#1B5E20'
+  },
+
+  // Accent Red Scale
+  red: {
+    50: '#FFF3F3',
+    100: '#FFE6E6',
+    200: '#FFB3B3',
+    300: '#FF8080',
+    400: '#FF6B6B', // Our accent color
+    500: '#FF4D4D',
+    600: '#DB3A3A',
+    700: '#B72B2B',
+    800: '#931F1F',
+    900: '#7A1717'
+  },
+
+  // Neutral/Gray Scale
+  neutral: {
+    50: '#F7F7F7',  // Surface background
+    100: '#E6E6E6',
+    200: '#CCCCCC',
+    300: '#B3B3B3',
+    400: '#999999',
+    500: '#808080',
+    600: '#666666',
+    700: '#4D4D4D',
+    800: '#333333',
+    900: '#2D3142'  // Text color
   },
 
   // Info Blue Scale
@@ -87,6 +87,15 @@ export const colors = {
     700: '#FFB300',
     800: '#FFA000',
     900: '#FF8F00'
+  },
+  
+  // Dark Theme Background Shades
+  darkTheme: {
+    background: '#121212',
+    surface: '#1E1E1E',
+    surfaceVariant: '#2C2C2C',
+    onSurface: '#E1E1E1',
+    onSurfaceVariant: '#BBBBBB',
   }
 };
 

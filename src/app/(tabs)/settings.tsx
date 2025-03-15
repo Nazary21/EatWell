@@ -1,13 +1,26 @@
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Switch, Button, useTheme, Divider } from 'react-native-paper';
-import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
-import { saveUserProfile, clearUserProfile } from '@/features/user/slice';
-import { useState, useCallback, useEffect } from 'react';
-import { UserProfile, UserPreferences } from '@/features/user/types';
-import { DesignSystemTest } from '@/components/DesignSystemTest';
+import { Text, useTheme } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScreenHeader } from '@/shared/components/ui/ScreenHeader';
 
 export default function SettingsScreen() {
-  return <DesignSystemTest />;
+  const theme = useTheme();
+  
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScreenHeader title="Settings" />
+      <ScrollView>
+        <View style={styles.section}>
+          <Text variant="headlineSmall" style={styles.sectionTitle}>
+            Settings
+          </Text>
+          <Text>
+            This is a placeholder for settings screen.
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
