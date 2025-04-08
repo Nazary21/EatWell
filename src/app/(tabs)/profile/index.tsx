@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Text, useTheme, Divider, List, Switch, Avatar } from 'react-native-paper';
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Text, useTheme, Divider, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { ScreenHeader } from '@/shared/components/ui/ScreenHeader';
 import { ProfileCard } from '@/shared/components/ui/ProfileCard';
 import { CustomTheme } from '@/lib/theme/types';
@@ -10,21 +10,11 @@ import { useUser } from '@/features/user/context/UserContext';
 
 export default function ProfileScreen() {
   const theme = useTheme<CustomTheme>();
-  const { user, userProfile, updatePreferences, signOut } = useUser();
-  
-  const [notifications, setNotifications] = useState(user?.preferences?.notifications || false);
-  const [darkMode, setDarkMode] = useState(user?.preferences?.darkMode || false);
+  const { user, userProfile, signOut } = useUser();
 
-  // Toggle notifications
-  const handleToggleNotifications = (value: boolean) => {
-    setNotifications(value);
-    updatePreferences({ notifications: value });
-  };
-
-  // Toggle dark mode
-  const handleToggleDarkMode = (value: boolean) => {
-    setDarkMode(value);
-    updatePreferences({ darkMode: value });
+  // Navigate to settings
+  const navigateToSettings = () => {
+    router.push('/profile/settings');
   };
 
   // Handle sign out
@@ -45,7 +35,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['right', 'left']}>
-      <ScreenHeader title="Profile" rightIcon="cog" onRightIconPress={() => console.log('Settings')} />
+      <ScreenHeader title="Profile" rightIcon="cog" onRightIconPress={navigateToSettings} />
       
       <ScrollView
         style={styles.scrollView}
@@ -104,35 +94,6 @@ export default function ProfileScreen() {
               left={props => <List.Icon {...props} icon="run" />}
               right={props => <List.Icon {...props} icon="chevron-right" />}
               onPress={() => console.log('Edit activity level')}
-            />
-          </List.Section>
-        </View>
-        
-        {/* App Preferences */}
-        <View style={styles.sectionContainer}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>
-            App Preferences
-          </Text>
-          
-          <List.Section>
-            <List.Item
-              title="Notifications"
-              left={props => <List.Icon {...props} icon="bell" />}
-              right={() => <Switch value={notifications} onValueChange={handleToggleNotifications} />}
-            />
-            <Divider />
-            <List.Item
-              title="Dark Mode"
-              left={props => <List.Icon {...props} icon="theme-light-dark" />}
-              right={() => <Switch value={darkMode} onValueChange={handleToggleDarkMode} />}
-            />
-            <Divider />
-            <List.Item
-              title="Units"
-              description={user.preferences?.useMetricSystem ? "Metric (kg, cm)" : "Imperial (lb, in)"}
-              left={props => <List.Icon {...props} icon="ruler" />}
-              right={props => <List.Icon {...props} icon="chevron-right" />}
-              onPress={() => console.log('Change units')}
             />
           </List.Section>
         </View>

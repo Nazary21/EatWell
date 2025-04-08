@@ -89,6 +89,16 @@ export const colors = {
     900: '#FF8F00'
   },
   
+  // Chart specific colors
+  chart: {
+    success: '#00E096', // Under goal (green)
+    excess: '#FF3D7F',  // Over goal (pink) 
+    protein: '#25C0FC', // Blue for protein
+    carbs: '#FF3D7F',   // Pink for carbs
+    fat: '#FFC738',     // Yellow for fat
+    goalLine: '#444444' // Goal line color
+  },
+  
   // Dark Theme Background Shades
   darkTheme: {
     background: '#121212',
@@ -96,6 +106,14 @@ export const colors = {
     surfaceVariant: '#2C2C2C',
     onSurface: '#E1E1E1',
     onSurfaceVariant: '#BBBBBB',
+    chart: {
+      success: '#4CAF50', // Different green for dark mode
+      excess: '#FF6B6B',  // Different red for dark mode
+      protein: '#42A5F5', // Different blue for dark mode
+      carbs: '#FF6B6B',   // Different pink for dark mode
+      fat: '#FFB300',     // Different yellow for dark mode
+      goalLine: '#BBBBBB' // Different goal line color for dark mode
+    }
   }
 };
 
